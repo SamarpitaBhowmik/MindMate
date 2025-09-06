@@ -1,52 +1,56 @@
 import express from "express";
-import { sendWhatsAppMessage } from "../services/twilio.js"; // adjust if your utils path differs
+import { sendWhatsAppMessage } from "../services/twilio.js";
 import { breakTaskIntoSteps } from "../services/gemini.js";
 import User from "../models/User.js";
 import Task from "../models/Task.js";
-
+import dotenv from "dotenv";
+dotenv.config();
 
 const router = express.Router();
 
-// ✅ Manual test route
+const TO_NUMBER = process.env.TEST_WHATSAPP_NUMBER; 
+
+// Manual test route
 router.get("/test-whatsapp", async (req, res) => {
-  await sendWhatsAppMessage("whatsapp:+918777679460", "Hello 👋 from TaskMate!");
+  await sendWhatsAppMessage(TO_NUMBER, "Hello from TaskMate!");
   res.send("Message sent (check your WhatsApp)");
 });
 
-// ✅ Twilio webhook route
+// Twilio webhook route
 router.post("/webhook", async (req, res) => {
-  const incomingMsg = req.body.Body;   // user's text
-  const from = req.body.From;          // user's number
+  const incomingMsg = req.body.Body;
 
-  console.log("📩 Incoming:", incomingMsg, "from", from);
+  console.log("Incoming:", incomingMsg);
 
   if (incomingMsg.toLowerCase().includes("hello")) {
-    await sendWhatsAppMessage(from, "Hi, I’m TaskMate 👋");
+    await sendWhatsAppMessage(TO_NUMBER, "Hi, I’m TaskMate");
   } else {
-    await sendWhatsAppMessage(from, "TaskMate here! Send 'Hello' to get started.");
+    await sendWhatsAppMessage(
+      TO_NUMBER,
+      "TaskMate here! Send 'Hello' to get started."
+    );
   }
 
-  // Twilio requires a response (empty 200 is fine since we reply via API)
   res.sendStatus(200);
 });
 
+// /task route
 router.post("/task", async (req, res) => {
-  const from = req.body.From;           // user's WhatsApp number
-  const incomingMsg = req.body.Body;    // task text
+  const incomingMsg = req.body.Body;
 
   try {
-    // 1️⃣ Check if user exists, if not create
-    let user = await User.findOne({ userId: from });
+    // Check if user exists, if not create
+    let user = await User.findOne({ userId: TO_NUMBER });
     if (!user) {
-      user = await User.create({ userId: from, phone: from });
+      user = await User.create({ userId: TO_NUMBER, phone: TO_NUMBER });
     }
 
-    // 2️⃣ Generate subtasks via Gemini
+    // Generate subtasks via Gemini
     const subtasks = await breakTaskIntoSteps(incomingMsg);
 
-    // 3️⃣ Save task in MongoDB
+    // Save task in MongoDB
     const task = await Task.create({
-      userId: from,
+      userId: TO_NUMBER,
       text: incomingMsg,
       subtasks,
       status: "pending",
@@ -55,16 +59,24 @@ router.post("/task", async (req, res) => {
     user.tasks.push(task._id);
     await user.save();
 
-    // 4️⃣ Reply to user via WhatsApp
-    const stepsMessage = subtasks.map((s, i) => `${i + 1}. ${s}`).join("\n");
-    await sendWhatsAppMessage(from, `Here are your steps:\n${stepsMessage}`);
+    // Prepare WhatsApp message
+    let stepsMessage = subtasks.map((s, i) => `${i + 1}. ${s}`).join("\n");
+
+    if (stepsMessage.length > 1500) {
+      stepsMessage = stepsMessage.substring(0, 1500) + "\n... (truncated)";
+    }
+
+    // Send WhatsApp to the sandbox number
+    await sendWhatsAppMessage(TO_NUMBER, `Here are your steps:\n${stepsMessage}`);
+
+    console.log("Incoming message:", incomingMsg);
+    console.log("Generated steps:", subtasks);
 
     res.sendStatus(200);
   } catch (err) {
-    console.error("❌ Error in /task:", err.message);
+    console.error("Error in /task:", err.message);
     res.sendStatus(500);
   }
 });
-
 
 export default router;

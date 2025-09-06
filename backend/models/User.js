@@ -1,8 +1,7 @@
-// backend/models/User.js
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  userId: { type: String, required: true, unique: true }, // e.g. Twilio "From" field
+  userId: { type: String, required: true, unique: true }, // Twilio "From" field
   phone: { type: String, required: true },
   tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "Task" }],
   xp: { type: Number, default: 0 },

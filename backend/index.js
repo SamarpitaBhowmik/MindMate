@@ -8,22 +8,22 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ---------- Middleware ----------
+// Middleware 
 app.use(express.json());
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-// ---------- Database ----------
+// Database 
 connectDB();
 
-// ---------- Routes ----------
+// Routes 
 app.get('/', (req, res) => {
-  res.send('🚀 TaskMate Backend is running');
+  res.send('TaskMate Backend is running');
 });
 
-app.use('/api', webhookRoutes);  // Twilio webhook & test routes
+app.use('/api', webhookRoutes);  
 
-// ---------- Start Server ----------
+
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
