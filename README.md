@@ -1,4 +1,4 @@
-# 🧠 MindMate – AI-Powered Task & Motivation Assistant  
+#  MindMate – AI-Powered Task & Motivation Assistant  
 
 
 > **MindMate** is an AI-driven task companion designed to help neurodiverse users (ADHD, autism, dyslexia, etc.) stay organized, motivated, and consistent.  
@@ -6,7 +6,7 @@ It combines **AI coaching, gamification, real-time reminders, and WhatsApp integ
 
 ---
 
-## 🚀 Features  
+## Features  
 
 ✅ **Task Management via WhatsApp** – Add, update, complete, and list tasks directly through chat.  
 ✅ **AI Task Breakdown** – Each task can be broken into smaller subtasks using Gemini/OpenAI.  
@@ -30,3 +30,24 @@ It combines **AI coaching, gamification, real-time reminders, and WhatsApp integ
 
 ---
 
+# 🧩 Usage  
+
+**-> Add tasks by sending WhatsApp message:**  
+
+**-> Mark tasks complete:**  
+
+**-> View progress:**  
+
+✅ Get motivational nudges 💪 when completing tasks.  
+
+---
+
+# 🎮 Gamification  
+
+- Each completed subtask → **+10 XP**  
+- Maintain streaks → **🔥 consecutive day bonus**  
+
+**Example reply:**  
+> 🎉 Great job! You earned **10 XP**.  
+> Total: **30 XP**.  
+> Streak: **3 days** 🔥  
