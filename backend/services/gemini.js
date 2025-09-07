@@ -20,7 +20,7 @@ export const breakTaskIntoSteps = async (taskText) => {
       .split(/\d+\.\s|[\n\r]+/)
       .map((step) => step.trim())
       .filter(Boolean)
-      .slice(0, 4); 
+      .slice(0, 5); 
 
     return steps;
   } catch (error) {
