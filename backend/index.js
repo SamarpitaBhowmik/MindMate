@@ -1,6 +1,7 @@
 import express from 'express';
 import connectDB from './utils/db.js';
 import webhookRoutes from './routes/webhook.js';
+import { startTaskReminders } from "./services/reminder.js";
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -15,6 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Database 
 connectDB();
+
+// Start reminders cron 
+startTaskReminders();
 
 // Routes 
 app.get('/', (req, res) => {

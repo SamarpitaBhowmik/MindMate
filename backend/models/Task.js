@@ -1,15 +1,14 @@
 import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema({
-  userId: { type: String, required: true }, // link to User.userId (Twilio number)
-  text: { type: String, required: true },   // original task input
-  subtasks: [{ type: String }],             // GPT will generate these
-  status: { 
-    type: String, 
-    enum: ["pending", "in-progress", "completed"], 
-    default: "pending" 
-  },
-  createdAt: { type: Date, default: Date.now }
+  userId: { type: String, required: true },
+  text: { type: String, required: true },
+  subtasks: [{ type: String }],
+  currentStep: { type: Number, default: 0 }, // field to track which subtask is active
+  status: { type: String, default: "pending" }, 
+  dueDate: { type: Date }, 
+  notified: { type: Boolean, default: false }, 
+  voiceCalled: { type: Boolean, default: false }, 
 });
 
 const Task = mongoose.model("Task", taskSchema);
